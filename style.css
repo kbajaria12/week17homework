@@ -63,3 +63,9 @@ html {
     margin-left: 8px;
     opacity: .5;
 }
+
+.my_polyline { 
+  stroke: orange;
+  fill: none; 
+  stroke-width: 3;  
+}

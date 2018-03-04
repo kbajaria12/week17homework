@@ -1,28 +1,12 @@
 
 // CTa - HW15 - Visulaizing Data With Leaflet
 
-
-// Creating map object - center of map is UCI
-var map = L.map("map", {
-  center: [33.640495, -117.844296],
-  zoom: 10
-});
-
-
-
-// Adding tile layer
-L.tileLayer("https://api.mapbox.com/styles/v1/mapbox/outdoors-v10/tiles/256/{z}/{x}/{y}?" +
-  "access_token=pk.eyJ1Ijoia2pnMzEwIiwiYSI6ImNpdGRjbWhxdjAwNG0yb3A5b21jOXluZTUifQ.T6YbdDixkOBWH_k9GbS8JQ").addTo(map);
-
-
-
-// Past 7 Days - All Earthquakes
-var link = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson";
-
+// Function to determine circle radius based on magnitude
 function markerSize(magnitude){
     return magnitude * 5;
 }
 
+// Function to determine marker color based on magnitude
 function markerColor(magnitude){
     if (magnitude <1) {
         return("LightGreen");
@@ -43,6 +27,24 @@ function markerColor(magnitude){
         return ("Red");
     }
 }
+
+
+// Creating map object - center of map is UCI
+var map = L.map("map", {
+  center: [33.640495, -117.844296],
+  zoom: 10
+});
+
+
+// Adding tile layer
+L.tileLayer("https://api.mapbox.com/styles/v1/mapbox/outdoors-v10/tiles/256/{z}/{x}/{y}?" +
+  "access_token=pk.eyJ1Ijoia2pnMzEwIiwiYSI6ImNpdGRjbWhxdjAwNG0yb3A5b21jOXluZTUifQ.T6YbdDixkOBWH_k9GbS8JQ").addTo(map);
+
+
+
+// Past 7 Days - All Earthquakes
+var link = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson";
+
 
 // Grabbing our GeoJSON data..
 d3.json(link, function(data) {
@@ -78,6 +80,8 @@ var cone = L.marker([33.640495, -117.844296], {
  //Binding a pop-up to our marker
 cone.bindPopup("Data Analytics");
 
+
+// Add legend to map
 var legend = L.control({position: 'bottomright'});
 
 legend.onAdd = function (map) {
@@ -99,3 +103,33 @@ legend.onAdd = function (map) {
 };
 
 legend.addTo(map);
+
+
+// Fetch and render tectonic plate boundries on map
+var link = "/PB2002_plates.json";
+
+var results=d3.json(link);
+
+d3.json(link, function(data) {
+    
+    for (var plate=0; plate < data.features.length; plate++){
+        
+        for (var coordinate=0; coordinate < (data.features[plate].geometry.coordinates.length); coordinate++){
+ 
+            fromCoords = data.features[plate].geometry.coordinates[coordinate];
+            toCoords = data.features[plate].geometry.coordinates[coordinate +1];
+
+        	L.geoJson(data.features[plate], {
+                pointToLayer: function(fromCoords, toCoords) {
+                    return L.polyline(fromCoords, toCoords, { className: 'my_polyline'});
+                },
+                // We set the style for each circleMarker using our styleInfo function.
+                style: function(feature){
+                    return {color: "Orange",
+                            weight: 2,
+                           fillOpacity: 0};
+                }
+            }).addTo(map);
+        }
+    }
+});
