@@ -44,3 +44,22 @@ html {
   color: rgb(137, 128, 144);
   text-transform: none;
 }
+
+.legend {
+    line-height: 18px;
+    padding: 6px 10px 6px 6px;
+    background-color:aliceblue;
+    color: #000033;
+    border-left: 5px solid #666666;
+    border-right: 5px solid #666666;
+    border-top: 5px solid #666666;
+    border-bottom: 5px solid #666666;
+}
+.legend i {
+    width: 18px;
+    height: 18px;
+    float: left;
+    margin-right: 8px;
+    margin-left: 8px;
+    opacity: .5;
+}
