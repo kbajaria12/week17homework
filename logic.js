@@ -28,21 +28,20 @@ function markerColor(magnitude){
     }
 }
 
+// Setup base map variables
+var accessToken = "pk.eyJ1Ijoia2pnMzEwIiwiYSI6ImNpdGRjbWhxdjAwNG0yb3A5b21jOXluZTUifQ.T6YbdDixkOBWH_k9GbS8JQ";
 
-// Creating map object - center of map is UCI
-var map = L.map("map", {
-  center: [33.640495, -117.844296],
-  zoom: 10
-});
+var mapBoxURL = "https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}"
+var idStreets = "mapbox.streets";
+var idDark = "mapbox.dark";
+var idPencil = "mapbox.pencil";
+var attribution ='Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>';
 
+var streets = L.tileLayer(mapBoxURL, {id: idStreets, attribution: attribution, accessToken: accessToken});
+var dark = L.tileLayer(mapBoxURL, {id: idDark, attribution: attribution, accessToken: accessToken});
+var pencil = L.tileLayer(mapBoxURL, {id: idPencil, attribution: attribution, accessToken: accessToken});
 
-// Adding tile layer
-L.tileLayer("https://api.mapbox.com/styles/v1/mapbox/outdoors-v10/tiles/256/{z}/{x}/{y}?" +
-  "access_token=pk.eyJ1Ijoia2pnMzEwIiwiYSI6ImNpdGRjbWhxdjAwNG0yb3A5b21jOXluZTUifQ.T6YbdDixkOBWH_k9GbS8JQ").addTo(map);
-
-
-
-// Past 7 Days - All Earthquakes
+// Load Past 7 Days - All Earthquakes
 var link = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson";
 
 
@@ -70,6 +69,22 @@ d3.json(link, function(data) {
             }).addTo(map);
     }
 });
+
+// Creating map object - center of map is UCI
+var map = L.map("map", {
+    center: [33.640495, -117.844296],
+    zoom: 10,
+    layers: [streets]
+});
+
+
+var baseMaps = {
+    "Streets": streets,
+    "Dark": dark,
+    "Pencil": pencil
+};
+
+L.control.layers(baseMaps).addTo(map);
         
 // Marker for UCI - Data Analytics
 var cone = L.marker([33.640495, -117.844296], {
