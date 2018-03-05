@@ -62,23 +62,8 @@ var overlayMaps = {
     "Plates": plates
 };
 
-//L.control.layers(baseMaps).addTo(map);
-
 // Load Past 7 Days - All Earthquakes
 var link = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson";
-
-//// Loading a GeoJSON file (using jQuery's $.getJSON)    
-//$.getJSON('/my-folder/my-file.json', function (data) {
-//
-//  // Use the data to create a GeoJSON layer and add it to the map
-//  var geojsonLayer = L.geoJson(data).addTo(map);
-//
-//  // Add the geojson layer to the layercontrol
-//  controlLayers.addOverlay(geojsonLayer, 'My GeoJSON layer title');
-//
-//});
-
-
 
 // Grabbing our GeoJSON data..
 d3.json(link, function(data) {
@@ -105,8 +90,6 @@ d3.json(link, function(data) {
             }).addTo(quakes);
     }
 });
-
-
         
 // Marker for UCI - Data Analytics
 var cone = L.marker([33.640495, -117.844296], {
@@ -170,4 +153,7 @@ d3.json(link, function(data) {
     }
 });
 
-L.control.layers(baseMaps,overlayMaps).addTo(map);
+L.control.layers(baseMaps,overlayMaps,{collapsed:false}).addTo(map);
+
+map.addLayer(plates);
+map.addLayer(quakes);
