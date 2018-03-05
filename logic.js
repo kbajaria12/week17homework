@@ -41,12 +41,48 @@ var streets = L.tileLayer(mapBoxURL, {id: idStreets, attribution: attribution, a
 var dark = L.tileLayer(mapBoxURL, {id: idDark, attribution: attribution, accessToken: accessToken});
 var pencil = L.tileLayer(mapBoxURL, {id: idPencil, attribution: attribution, accessToken: accessToken});
 
+// Creating map object - center of map is UCI
+var map = L.map("map", {
+    center: [33.640495, -117.844296],
+    zoom: 10,
+    layers: [streets]
+});
+
+var baseMaps = {
+    "Streets": streets,
+    "Dark": dark,
+    "Pencil": pencil
+};
+
+var quakes = L.layerGroup([]);
+var plates = L.layerGroup([]);
+
+var overlayMaps = {
+    "Quakes": quakes,
+    "Plates": plates
+};
+
+//L.control.layers(baseMaps).addTo(map);
+
 // Load Past 7 Days - All Earthquakes
 var link = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson";
+
+//// Loading a GeoJSON file (using jQuery's $.getJSON)    
+//$.getJSON('/my-folder/my-file.json', function (data) {
+//
+//  // Use the data to create a GeoJSON layer and add it to the map
+//  var geojsonLayer = L.geoJson(data).addTo(map);
+//
+//  // Add the geojson layer to the layercontrol
+//  controlLayers.addOverlay(geojsonLayer, 'My GeoJSON layer title');
+//
+//});
+
 
 
 // Grabbing our GeoJSON data..
 d3.json(link, function(data) {
+    
     
     for (var i=0; i < data.features.length; i++){
         	L.geoJson(data.features[i], {
@@ -66,25 +102,11 @@ d3.json(link, function(data) {
                 onEachFeature: function(feature, layer) {
                     layer.bindPopup("Magnitude: " + feature.properties.mag + "<br>Location: " + feature.properties.place);
                 }
-            }).addTo(map);
+            }).addTo(quakes);
     }
 });
 
-// Creating map object - center of map is UCI
-var map = L.map("map", {
-    center: [33.640495, -117.844296],
-    zoom: 10,
-    layers: [streets]
-});
 
-
-var baseMaps = {
-    "Streets": streets,
-    "Dark": dark,
-    "Pencil": pencil
-};
-
-L.control.layers(baseMaps).addTo(map);
         
 // Marker for UCI - Data Analytics
 var cone = L.marker([33.640495, -117.844296], {
@@ -94,7 +116,6 @@ var cone = L.marker([33.640495, -117.844296], {
 
  //Binding a pop-up to our marker
 cone.bindPopup("Data Analytics");
-
 
 // Add legend to map
 var legend = L.control({position: 'bottomright'});
@@ -144,7 +165,9 @@ d3.json(link, function(data) {
                             weight: 2,
                            fillOpacity: 0};
                 }
-            }).addTo(map);
+            }).addTo(plates);
         }
     }
 });
+
+L.control.layers(baseMaps,overlayMaps).addTo(map);
